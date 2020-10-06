@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import User
+from DjangoUeditor.models import UEditorField
 #导入Django自带用户模板
 
 #文章分类
@@ -45,7 +46,10 @@ class Article(models.Model):
     tags = models.ManyToManyField(Tag, verbose_name = '标签', blank = True)
     #使用外键关联标签表与多对多关系
     img = models.ImageField(upload_to = 'article_img/%Y/%m/%d', verbose_name = '文章图片', blank = True, null = True)
-    body = models.TextField()
+    body = UEditorField('内容', width = 800, height = 500, toolbars = "full",
+                        imagePath = "upimg/", filePath = "upfile/", upload_settings = {"imageMaxSize": 1204000},
+                        settings = {}, command = None, blank = True
+                        )
     user = models.ForeignKey(User, on_delete = models.CASCADE, verbose_name = '作者')
     """
     文章作者，这里User是从django.contrib.auth.models导入的。
@@ -68,9 +72,11 @@ class Banner(models.Model):
     text_info = models.CharField('标题', max_length = 50, default = '')
     img = models.ImageField('轮播图', upload_to = 'banner/')
     link_url = models.URLField('图片链接', max_length = 100)
+    is_active = models.BooleanField('是否是active', default = False)
 
     def __str__(self):
         return self.text_info
+
     class Meta:
         verbose_name = '轮播图'
         verbose_name_plural = '轮播图'
